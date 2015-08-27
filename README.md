@@ -59,7 +59,7 @@ or `interval` miliseconds have elapsed since the last execution of `fn`.
 
 However, if `once` is set to `true`, `fn` will be called when
 either `fn` has not been called yet,
-or `interval` miliseconds have elapsed since the last execution of the rebounced version of `fn`.
+or `interval` miliseconds have elapsed since the last execution of **the rebounced version** of `fn`.
 
 Suppose that the rebounced version will be scheduled to execute at intervals
 `[50, 100, 50, 50, 100, 50, 50, 50]`,
