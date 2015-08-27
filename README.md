@@ -1,5 +1,5 @@
 # rebounce
-Usefull for implementing behavior that should happen less frequently than default
+Usefull for implementing behavior that should happen less frequently than default.
 
 ## Example
 
@@ -8,56 +8,30 @@ Usefull for implementing behavior that should happen less frequently than defaul
 ```javascript
 var rebounce = require('rebounce');
 
-var start = Date.now();
+// want 
+var rebounced = rebounce(original, 100)
 
-console.log('Time\tFunction Executed');
-bounce(
-  rebounce(log, 100),
-  50,
-  10
-);
+// call `rebounced` every 50ms
 
-function log() {
-  console.log(time() + '\t' + '*rebounced');
+function original() {
 }
 
-function bounce(fn, interval, count, onend) {
-  if (count--) {
-    console.log(time() + '\t' + '-original');
-    fn();
-    setTimeout(
-      bounce.bind(null, fn, interval, count, onend),
-      interval
-    );
-  } else if (onend) {
-    onend();
-  }
-}
-
-function time() {
-  return Date.now() - start;
-}
 ```
 
-output:
-
 ```
-Time  Function Executed
-13    -original
-66    -original
-118   *rebounced
-119   -original
-172   -original
-223   *rebounced
-223   -original
-277   -original
-328   *rebounced
-328   -original
-381   -original
-433   *rebounced
-433   -original
-487   -original
-538   *rebounced
+Time  Rebounced Original
+----------------------------------------
+0     called    called
+56    called    -
+105   called    called
+157   called    -
+211   called    called
+266   called    -
+317   called    called
+372   called    -
+423   called    called
+476   called    -
+
 ```
 
 ### browser
@@ -77,52 +51,99 @@ Time  Function Executed
 
 ## API
 
-### rebounce(fn, interval, [ immediate = false ])
+### rebounce(fn, interval, [ once = false ])
+Creates and returns a rebounced version of the passed function
+that will execute the original `fn` when
+either `fn` has not been called yet,
+or `interval` miliseconds have elapsed since the last execution of `fn`.
 
-Creates and returns a rebounced version of the passed function that will execute `fn` only when `interval` miliseconds have elapsed since the last execution of `fn`.
+However, if `once` is set to `true`, `fn` will be called when
+either `fn` has not been called yet,
+or `interval` miliseconds have elapsed since the last execution of the rebounced version of `fn`.
 
-Pass `true` for `immediate` to make rebounce call `fn` immediately when booted. Usually `fn` is executed once more than otherwise at the beginning.
-
-`immediate` is set to `false`:
-
-```
-Time  Function Executed
-13    -original
-66    -original
-118   *rebounced
-119   -original
-172   -original
-223   *rebounced
-223   -original
-277   -original
-328   *rebounced
-328   -original
-381   -original
-433   *rebounced
-433   -original
-487   -original
-538   *rebounced
-```
-
-`immediate` is set to `true`:
+Suppose that the rebounced version will be scheduled to execute at intervals
+`[50, 100, 50, 50, 100, 50, 50, 50]`,
+and `interval` is set to `100`, `once` to `false`,
+then the actual times of execution of `fn` and its rebounced version will be like:
 
 ```
-Time  Function Executed
-14    -original
-15    *rebounced
-70    -original
-120   *rebounced
-120   -original
-176   -original
-223   *rebounced
-226   -original
-277   -original
-326   *rebounced
-327   -original
-380   -original
-427   *rebounced
-432   -original
-487   -original
-529   *rebounced
+Time  Rebounced Original
+----------------------------------------
+0     1         1
+55    2         -
+161   3         2
+212   4         -
+263   5         3
+366   6         4
+422   7         -
+471   8         5
+527   9         -
+```
+
+If `once` is set to `true`,
+
+```
+Time  Rebounced Original
+----------------------------------------
+0     1         1
+53    2         -
+156   3         -
+157   -         2
+210   4         -
+266   5         -
+370   6         3
+422   7         -
+474   8         -
+529   9         -
+
+```
+
+
+### risingTrigger v.s. fallingTrigger
+By default, the rebounced version executes `fn` at the beginning of the `interval`.
+But you can use `rebounce.fallingTrigger` to execute `fn` at the end.
+
+```javascript
+var risingTrigger = require('rebounce');
+var fallingTrigger = require('rebounce').fallingTrigger;
+```
+
+In the above example,
+
+when using `risingTrigger`:
+
+```
+Time  Rebounced Original
+----------------------------------------
+0     1         1
+55    2         -
+161   3         2
+212   4         -
+263   5         3
+366   6         4
+422   7         -
+471   8         5
+527   9         -
+```
+
+when using `fallingTrigger`
+
+```
+Time  Rebounced Original
+----------------------------------------
+0     1         -
+57    2         -
+106   -         1
+160   3         -
+216   4         -
+265   -         2
+267   5         -
+371   -         3
+372   6         -
+424   7         -
+472   -         4
+475   8         -
+531   9         -
+581   -         5
 ```
 

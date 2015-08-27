@@ -5,7 +5,7 @@ var path = require('path');
 
 gulp.task('default', function () {
   return browserify({
-      entries: path.join(__dirname, 'index.js'),
+      entries: path.join(__dirname, 'lib', 'rebounce.js'),
       standalone: 'window.rebounce',
     })
     .bundle()

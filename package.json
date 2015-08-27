@@ -2,9 +2,9 @@
   "name": "rebounce",
   "version": "1.0.0",
   "description": "Usefull for implementing behavior that should happen less frequently than default",
-  "main": "index.js",
+  "main": "lib/rebounce.js",
   "scripts": {
-    "test": "eslint index.js test/*.js && tap test/*.js"
+    "test": "eslint lib/*.js test/*.js && tap test/*.js"
   },
   "repository": {
     "type": "git",
